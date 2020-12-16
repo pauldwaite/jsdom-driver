@@ -1,0 +1,25 @@
+{
+  "name": "jsdom-driver",
+  "version": "0.1.0",
+  "description": "WebDriver-ish JavaScript API controlling a fake web browser powered by JSDOM",
+  "homepage": "https://github.com/pauldwaite/jsdom-driver#readme",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pauldwaite/jsdom-driver.git"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "node test/expressApps/testExpressApp.js & mocha; pkill -SIGINT testExpressApp"
+  },
+  "dependencies": {
+    "got": "11.8.1",
+    "jsdom": "16.4.0",
+    "tough-cookie": "4.0.0"
+  },
+  "devDependencies": {
+    "express": "4.17.1",
+    "mocha": "8.2.1"
+  }
+}
