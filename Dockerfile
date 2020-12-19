@@ -8,5 +8,6 @@ COPY src/package-lock.json ./
 RUN npm ci --no-optional --loglevel error
 
 COPY ./src .
+COPY ./README.md .
 
 CMD ["npm", "test"]
