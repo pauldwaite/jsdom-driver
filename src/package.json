@@ -1,8 +1,16 @@
 {
   "name": "jsdom-driver",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "engines": {
+    "node": "14"
+  },
   "description": "WebDriver-ish JavaScript API controlling a fake web browser powered by JSDOM",
   "homepage": "https://github.com/pauldwaite/jsdom-driver#readme",
+  "author": {
+    "name": "Paul D. Waite",
+    "email": "paul@pauldwaite.co.uk",
+    "url" : "http://www.pauldwaite.co.uk/"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:pauldwaite/jsdom-driver.git"

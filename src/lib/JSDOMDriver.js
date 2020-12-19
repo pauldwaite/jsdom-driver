@@ -19,7 +19,9 @@ class JSDOMDriver {
 		            	addJSDOMToResponse,
 		            	(response) => {
 		            		this.#lastResponse = response;
-		            		this.#global = this.#lastResponse.jsDom.window;
+		            		this.#global = (this.#lastResponse.jsDom
+		            			? this.#lastResponse.jsDom.window
+		            			: undefined);
 		            		return response;
 		            	}
 		            ]
@@ -31,6 +33,19 @@ class JSDOMDriver {
 		await this.#request(url);
 	}
 
+	async json(url, body) {
+		const options = {};
+
+		if (body) {
+			options.json = body;
+		}
+
+		const response = await this.#request.post(url, options).json();
+
+		return response;
+	}
+
+	// TODO: should this maybe not be an instance method? As it doesn't use any of the instance's things?
 	async isUp(url, timeout=5000) {
 		// We don't need to use this.#request here, because we don't need to make a JSDOM out of the response, or do anything other than be content that the request worked without throwing an error, to confirm the server's up.
 		await got(url, {
@@ -108,6 +123,7 @@ const addJSDOMToResponse = async (response) => {
 	const isHtml = (response.headers['content-type'].indexOf('text/html') === 0);
 
 	if (isHtml) {
+
 		const jsDomOptions = {
 		    url: response.request.options.url.href
 		};

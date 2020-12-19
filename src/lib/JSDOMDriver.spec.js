@@ -29,6 +29,24 @@ describe('JSDOMDriver()', function () {
 	});
 
 
+	describe('json()', function () {
+
+		it('can totally post JSON', async function () {
+			const response = await driver.json(
+				`http://localhost:${config.testExpressApp.port}/json1`,
+				{
+					'some': 'json innit'
+				}
+			);
+
+			assert.strictEqual(
+				response.a,
+				'ok'
+			);
+		});
+	});
+
+
 	describe('followLink()', function () {
 
 		it('like, goes to the damn link or whatever', async function () {
