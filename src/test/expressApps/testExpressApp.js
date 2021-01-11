@@ -29,6 +29,13 @@ app.route('/')
 
 					<input data-test-id="submit1" type="submit" name="submit1" value="Submit 1">
 				</form>
+
+				<form method="POST" action="/form2Destination">
+					<label for="input2">Input 2</label>
+					<input data-test-id="input2" name="input2">
+
+					<button data-test-id="submit2" type="submit" name="submit2" value="Submit 2">Submit 2 button text</button>
+				</form>
 			</body>
 			</html>
 		`);
@@ -64,6 +71,27 @@ app.route('/form1Destination')
 
 					<dt>submit1:</dt>
 					<dd data-test-id="submit1-value">${req.body.submit1}</dd>
+				</dl>
+			</body>
+			</html>
+		`);
+	});
+
+app.route('/form2Destination')
+	.post((req, res) => {
+		res.status(200).send(`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="utf-8">
+				<title>Form 2 (submitted) - Test Express App</title>
+			</head>
+			<body data-test-id="form2Destination">
+				<dl>
+					<dt>input2:</dt>
+					<dd data-test-id="input2-value">${req.body.input2}</dd>
+
+					<dt>submit2:</dt>
+					<dd data-test-id="submit2-value">${req.body.submit2}</dd>
 				</dl>
 			</body>
 			</html>

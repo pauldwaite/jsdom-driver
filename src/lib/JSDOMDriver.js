@@ -80,7 +80,7 @@ class JSDOMDriver {
 			// TODO: we might want to see if there's a single button element in the form, or one with type="submit"maybe, and include its value if it has one, to match browser behaviour when the user submits a form without selecting a button.
 		}
 		else if (
-			   element.constructor.name === 'HTMLButonElement'
+			   element.constructor.name === 'HTMLButtonElement'
 			|| (
 				   element.constructor.name === 'HTMLInputElement'
 				&& element.type === 'submit'

@@ -68,25 +68,25 @@ describe('JSDOMDriver()', function () {
 
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
 
-			driver.$('[data-test-id="input1"]').value = 'Input 1 value set from test';
+			driver.$('[data-test-id="input2"]').value = 'Input 2 value set from test';
 
-			await driver.submitForm('[data-test-id="submit1"]');
+			await driver.submitForm('[data-test-id="submit2"]');
 
 			assert.strictEqual(
-				driver.$$('[data-test-id="form1Destination"]').length,
+				driver.$$('[data-test-id="form2Destination"]').length,
 				1
 			);
 			assert.strictEqual(
-				driver.$$('[data-test-id="input1-value"]').length,
+				driver.$$('[data-test-id="input2-value"]').length,
 				1
 			);
 			assert.strictEqual(
-				driver.$('[data-test-id="input1-value"]').textContent,
-				'Input 1 value set from test'
+				driver.$('[data-test-id="input2-value"]').textContent,
+				'Input 2 value set from test'
 			);
 			assert.strictEqual(
-				driver.$('[data-test-id="submit1-value"]').textContent,
-				'Submit 1'
+				driver.$('[data-test-id="submit2-value"]').textContent,
+				'Submit 2'
 			);
 		});
 
