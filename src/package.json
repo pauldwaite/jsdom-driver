@@ -1,6 +1,6 @@
 {
   "name": "jsdom-driver",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
     "node": "14"
   },
@@ -9,7 +9,7 @@
   "author": {
     "name": "Paul D. Waite",
     "email": "paul@pauldwaite.co.uk",
-    "url" : "http://www.pauldwaite.co.uk/"
+    "url": "http://www.pauldwaite.co.uk/"
   },
   "repository": {
     "type": "git",

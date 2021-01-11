@@ -89,6 +89,12 @@ describe('JSDOMDriver()', function () {
 				'Submit 1'
 			);
 		});
+
+		it.skip('works with <button> elements', async function () {});
+
+		it.skip('works with <form> elements', async function () {});
+
+		it.skip('maybe simulates the browser heuristics for including submit button values when a <form> element selector is supplied', async function () {});
 	});
 
 });

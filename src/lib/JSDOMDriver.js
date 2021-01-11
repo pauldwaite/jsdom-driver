@@ -77,13 +77,14 @@ class JSDOMDriver {
 
 		if (element.constructor.name === 'HTMLFormElement') {
 			formElement = element;
+			// TODO: we might want to see if there's a single button element in the form, or one with type="submit"maybe, and include its value if it has one, to match browser behaviour when the user submits a form without selecting a button.
 		}
 		else if (
-			element.type === 'submit'
-			&& (
-				element.constructor.name === 'HTMLInputElement'
-				|| element.constructor.name === 'HTMLButonElement'
-			)
+			   element.constructor.name === 'HTMLButonElement'
+			|| (
+				   element.constructor.name === 'HTMLInputElement'
+				&& element.type === 'submit'
+			   )
 		) {
 			formElement = element.form;
 			submitButtonElement = element;
@@ -95,7 +96,7 @@ class JSDOMDriver {
 		const formUrl = new URL(formElement.action).href;
 		const formData = new this.#global.FormData(formElement);
 
-		if (submitButtonElement.name) {
+		if (submitButtonElement && submitButtonElement.name) {
 			formData.set(submitButtonElement.name, submitButtonElement.value);
 		}
 
