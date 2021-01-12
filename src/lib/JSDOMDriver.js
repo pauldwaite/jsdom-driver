@@ -33,14 +33,16 @@ class JSDOMDriver {
 		await this.#request(url);
 	}
 
-	async json(url, body) {
-		const options = {};
+	async json(url, body, method="POST") {
+		const options = {
+			method: method
+		};
 
 		if (body) {
 			options.json = body;
 		}
 
-		const response = await this.#request.post(url, options).json();
+		const response = await this.#request(url, options).json();
 
 		return response;
 	}
@@ -72,6 +74,7 @@ class JSDOMDriver {
 
 	async submitForm(selector) {
 		const element = this.$(selector);
+
 		let formElement;
 		let submitButtonElement;
 
@@ -79,18 +82,21 @@ class JSDOMDriver {
 			formElement = element;
 			// TODO: we might want to see if there's a single button element in the form, or one with type="submit"maybe, and include its value if it has one, to match browser behaviour when the user submits a form without selecting a button.
 		}
-		else if (
-			   element.constructor.name === 'HTMLButtonElement'
-			|| (
-				   element.constructor.name === 'HTMLInputElement'
-				&& element.type === 'submit'
-			   )
-		) {
+		else if (element.form) {
 			formElement = element.form;
-			submitButtonElement = element;
+			// TODO: we might want to see if there's a single button element in the form, or one with type="submit"maybe, and include its value if it has one, to match browser behaviour when the user submits a form without selecting a button.
+			if (
+				   element.constructor.name === 'HTMLButtonElement'
+				|| (
+					   element.constructor.name === 'HTMLInputElement'
+					&& element.type === 'submit'
+				   )
+			) {
+				submitButtonElement = element;
+			}
 		}
 		else {
-			throw new TypeError(`${selector} must be a form or a submit button`);
+			throw new TypeError(`the selector '${selector}' must select a form, a form field, or a submit button`);
 		}
 
 		const formUrl = new URL(formElement.action).href;

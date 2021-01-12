@@ -105,6 +105,13 @@ app.route('/json1')
 		});
 	});
 
+app.route('/json2')
+	.put(express.json(), (req, res) => {
+		res.status(200).json({
+			'a': 'ok'
+		});
+	});
+
 process.title = config.processTitle;
 
 const server = app.listen(config.port, () => {

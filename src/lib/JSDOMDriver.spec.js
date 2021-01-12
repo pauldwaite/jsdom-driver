@@ -44,6 +44,21 @@ describe('JSDOMDriver()', function () {
 				'ok'
 			);
 		});
+
+		it('can totally PUT JSON', async function () {
+			const response = await driver.json(
+				`http://localhost:${config.testExpressApp.port}/json2`,
+				{
+					'some': 'json innit'
+				},
+				'PUT'
+			);
+
+			assert.strictEqual(
+				response.a,
+				'ok'
+			);
+		});
 	});
 
 
@@ -87,6 +102,27 @@ describe('JSDOMDriver()', function () {
 			assert.strictEqual(
 				driver.$('[data-test-id="submit2-value"]').textContent,
 				'Submit 2'
+			);
+		});
+
+		it('works with form field elements', async function () {
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
+
+			driver.$('[data-test-id="input2"]').value = 'Input 2 value set from test';
+
+			await driver.submitForm('[data-test-id="input2"]');
+
+			assert.strictEqual(
+				driver.$$('[data-test-id="form2Destination"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$$('[data-test-id="input2-value"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="input2-value"]').textContent,
+				'Input 2 value set from test'
 			);
 		});
 
