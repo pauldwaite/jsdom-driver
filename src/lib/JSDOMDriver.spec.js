@@ -26,6 +26,21 @@ describe('JSDOMDriver()', function () {
 				1
 			);
 		});
+
+		it('throws an error if the supplied URL returns 404', async function () {
+			assert.rejects(
+				async () => {
+					await driver.goTo(`http://localhost:${config.testExpressApp.port}/thisURLDoesNotExist`);
+				},
+				(err) => {
+					assert.strictEqual(
+						err.response.statusCode,
+						404
+					);
+					return true;
+				}
+			);
+		});
 	});
 
 
