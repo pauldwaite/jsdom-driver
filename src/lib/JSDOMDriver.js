@@ -11,7 +11,7 @@ class JSDOMDriver {
 	#lastResponse;
 	#global;
 
-	constructor() {
+	constructor({prefixUrl}={}) {
 		this.#request = got.extend({
 		    cookieJar: new CookieJar(),
 		        hooks: {
@@ -25,7 +25,8 @@ class JSDOMDriver {
 		            		return response;
 		            	}
 		            ]
-		        }
+		        },
+		    prefixUrl: prefixUrl
 		});
 	}
 

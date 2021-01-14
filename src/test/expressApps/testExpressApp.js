@@ -41,6 +41,22 @@ app.route('/')
 		`);
 	});
 
+app.route('/page')
+	.get((req, res) => {
+		res.status(200).send(`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="utf-8">
+				<title>I'm a Page! - Test Express App</title>
+			</head>
+			<body data-test-id="I am a page">
+				<p>Yes hello I am a page</p>
+			</body>
+			</html>
+		`);
+	});
+
+
 app.route('/link1Destination')
 	.get((req, res) => {
 		res.status(200).send(`<!DOCTYPE html>

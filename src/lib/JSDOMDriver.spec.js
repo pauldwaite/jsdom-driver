@@ -16,6 +16,22 @@ describe('JSDOMDriver()', function () {
 	});
 
 
+	describe('constructor()', function () {
+		it('supports a prefixUrl option', async function () {
+			const driverWithPrefixUrl = new JSDOMDriver({
+				prefixUrl: `http://localhost:${config.testExpressApp.port}`
+			});
+
+			await driverWithPrefixUrl.goTo('page');
+
+			assert.strictEqual(
+				driverWithPrefixUrl.$$('[data-test-id="I am a page"]').length,
+				1
+			);
+		});
+	});
+
+
 	describe('goTo()', function () {
 
 		it('goes somewhere', async function () {
