@@ -106,6 +106,8 @@ describe('JSDOMDriver()', function () {
 				1
 			);
 		});
+
+		it.skip('throws a sensible error if the selector selects no elements', async function () {});
 	});
 
 	describe('submitForm()', function () {
@@ -162,6 +164,8 @@ describe('JSDOMDriver()', function () {
 		it.skip('works with <form> elements', async function () {});
 
 		it.skip('maybe simulates the browser heuristics for including submit button values when a <form> element selector is supplied', async function () {});
+
+		it.skip('throws a sensible error if the selector selects no elements', async function () {});
 	});
 
 });
