@@ -15,6 +15,7 @@ class JSDOMDriver {
 		this.#request = got.extend({
 		    cookieJar: new CookieJar(),
 		        hooks: {
+		            beforeRequest: [deduplicatePrefixUrl],
 		            afterResponse: [
 		            	addJSDOMToResponse,
 		            	(response) => {
@@ -100,7 +101,7 @@ class JSDOMDriver {
 			throw new TypeError(`the selector '${selector}' must select a form, a form field, or a submit button`);
 		}
 
-		const formUrl = new URL(formElement.action).href;
+		const formUrl = new URL(formElement.action);
 		const formData = new this.#global.FormData(formElement);
 
 		if (submitButtonElement && submitButtonElement.name) {
@@ -154,6 +155,18 @@ const addJSDOMToResponse = async (response) => {
 	}
 
 	return response;
+};
+
+const deduplicatePrefixUrl = (requestOptions) => {
+	const prefixUrl = requestOptions.prefixUrl;
+	const pathnameWithoutSlash = requestOptions.url.pathname.slice(1);
+
+	if (
+		   prefixUrl.length
+		&& pathnameWithoutSlash.startsWith(prefixUrl)
+	) {
+		requestOptions.url.pathname = requestOptions.url.pathname.replace(prefixUrl, '');
+	}
 };
 
 

@@ -107,6 +107,21 @@ describe('JSDOMDriver()', function () {
 			);
 		});
 
+		it('honours the prefixUrl option', async function () {
+			const driverWithPrefixUrl = new JSDOMDriver({
+				prefixUrl: `http://localhost:${config.testExpressApp.port}`
+			});
+
+			await driverWithPrefixUrl.goTo('');
+
+			await driverWithPrefixUrl.followLink('[data-test-id="link1"]');
+
+			assert.strictEqual(
+				driverWithPrefixUrl.$$('[data-test-id="link1Destination"]').length,
+				1
+			);
+		});
+
 		it.skip('throws a sensible error if the selector selects no elements', async function () {});
 	});
 
@@ -135,6 +150,23 @@ describe('JSDOMDriver()', function () {
 			assert.strictEqual(
 				driver.$('[data-test-id="submit2-value"]').textContent,
 				'Submit 2'
+			);
+		});
+
+		it('honours the prefixUrl option', async function () {
+			const driverWithPrefixUrl = new JSDOMDriver({
+				prefixUrl: `http://localhost:${config.testExpressApp.port}`
+			});
+
+			await driverWithPrefixUrl.goTo('');
+
+			driverWithPrefixUrl.$('[data-test-id="input2"]').value = 'Input 2 value set from test';
+
+			await driverWithPrefixUrl.submitForm('[data-test-id="submit2"]');
+
+			assert.strictEqual(
+				driverWithPrefixUrl.$$('[data-test-id="form2Destination"]').length,
+				1
 			);
 		});
 
