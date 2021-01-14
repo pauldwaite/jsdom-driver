@@ -51,8 +51,8 @@ class JSDOMDriver {
 
 	// TODO: should this maybe not be an instance method? As it doesn't use any of the instance's things?
 	async isUp(url, timeout=5000) {
-		// We don't need to use this.#request here, because we don't need to make a JSDOM out of the response, or do anything other than be content that the request worked without throwing an error, to confirm the server's up.
-		await got(url, {
+		// We use this.#request here, because even though we're just checking that the request didn't throw to confirm the server is up, we still want prefixUrl to work if defined
+		await this.#request(url, {
 			timeout: timeout
 		});
 		return true;

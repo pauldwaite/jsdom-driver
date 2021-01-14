@@ -93,6 +93,11 @@ describe('JSDOMDriver()', function () {
 	});
 
 
+	describe('isUp', function () {
+		it.skip(`throws an error if the supplied URL isn't up`, async function () {});
+	});
+
+
 	describe('followLink()', function () {
 
 		it('like, goes to the damn link or whatever', async function () {
