@@ -62,6 +62,18 @@ describe('JSDOMDriver()', function () {
 
 	describe('json()', function () {
 
+		it('totally requests JSON with a GET by default', async function () {
+			const response = await driver.json(
+				`http://localhost:${config.testExpressApp.port}/json3`,
+			);
+
+			assert.strictEqual(
+				response.a,
+				'ok'
+			);
+
+		});
+
 		it('can totally post JSON', async function () {
 			const response = await driver.json(
 				`http://localhost:${config.testExpressApp.port}/json1`,
@@ -89,6 +101,16 @@ describe('JSDOMDriver()', function () {
 				response.a,
 				'ok'
 			);
+		});
+
+		it('throws an error if a method other than PUT or POST is specified', async function () {
+			await assert.rejects(driver.json(
+				`http://localhost:${config.testExpressApp.port}/json2`,
+				{
+					'some': 'json innit'
+				},
+				'MADEUPMETHOD'
+			));
 		});
 	});
 

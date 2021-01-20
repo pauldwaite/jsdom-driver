@@ -128,6 +128,13 @@ app.route('/json2')
 		});
 	});
 
+app.route('/json3')
+	.get(express.json(), (req, res) => {
+		res.status(200).json({
+			'a': 'ok'
+		});
+	});
+
 process.title = config.processTitle;
 
 const server = app.listen(config.port, () => {

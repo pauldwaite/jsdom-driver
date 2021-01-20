@@ -35,13 +35,19 @@ class JSDOMDriver {
 		await this.#request(url);
 	}
 
-	async json(url, body, method="POST") {
-		const options = {
-			method: method
-		};
+	async json(url, body=undefined, method='POST') {
+		const options = {};
 
-		if (body) {
+		if (body === undefined) {
+			options.method = 'GET';
+		}
+		else {
+			if ( !['POST', 'PUT'].includes(method) ) {
+				throw new Error('method must be POST or PUT');
+			}
+
 			options.json = body;
+			options.method = method;
 		}
 
 		const response = await this.#request(url, options).json();
