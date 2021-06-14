@@ -228,19 +228,19 @@ describe('JSDOMDriver()', function () {
 		it.skip('throws a sensible error if the selector selects no elements', async function () {});
 	});
 
-	describe('getDownload', function () {
+	describe('getDownload()', function () {
 
 		it('returns the response body if it has a "content-disposition: attachment;" header', async function () {
 
-			const testFileContents = fs.readFileSync('test/expressApps/testPDF.pdf', 'utf8');
+			const testFile = fs.readFileSync('test/expressApps/testPDF.pdf');
 
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/download/pdf`);
 
 			const download = driver.getDownload();
 
 			assert.strictEqual(
-				download,
-				testFileContents
+				download.equals(testFile),
+				true
 			);
 		});
 	});

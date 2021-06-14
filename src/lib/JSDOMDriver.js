@@ -141,7 +141,7 @@ class JSDOMDriver {
 
 	getDownload() {
 		if (this.#lastResponse.headers['content-disposition'].startsWith('attachment;')) {
-			return this.#lastResponse.body;
+			return this.#lastResponse.rawBody;
 		}
 	}
 }
