@@ -6,6 +6,11 @@ const          fs = require('fs');
 const JSDOMDriver = require('./JSDOMDriver');
 
 
+const fs = require('fs');
+const got = require('got');
+const FormDataThirdParty = require('form-data');
+
+
 describe('JSDOMDriver()', function () {
 
 	const driver = new JSDOMDriver();
@@ -53,6 +58,21 @@ describe('JSDOMDriver()', function () {
 					assert.strictEqual(
 						err.response.statusCode,
 						404
+					);
+					return true;
+				}
+			);
+		});
+
+		it('throws an error if the supplied URL returns 500', async function () {
+			assert.rejects(
+				async () => {
+					await driver.goTo(`http://localhost:${config.testExpressApp.port}/server-error`);
+				},
+				(err) => {
+					assert.strictEqual(
+						err.response.statusCode,
+						500
 					);
 					return true;
 				}
@@ -136,6 +156,21 @@ describe('JSDOMDriver()', function () {
 				},
 				'MADEUPMETHOD'
 			));
+		});
+
+		it('throws an error if the supplied URL returns 500', async function () {
+			assert.rejects(
+				async () => {
+					await driver.json(`http://localhost:${config.testExpressApp.port}/server-error`);
+				},
+				(err) => {
+					assert.strictEqual(
+						err.response.statusCode,
+						500
+					);
+					return true;
+				}
+			);
 		});
 	});
 
@@ -241,6 +276,42 @@ describe('JSDOMDriver()', function () {
 				driver.$('[data-test-id="input2-value"]').textContent,
 				'Input 2 value set from test'
 			);
+		});
+
+		it('does something sensible with empty file upload fields?', async function () {
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
+
+			await driver.submitForm('form');
+		});
+
+		it.skip('maybe works with the example code from Got\'s readme at least?', async function () {
+			const form = new FormDataThirdParty();
+
+			form.append('my_file', fs.createReadStream('lib/testFile.txt'));
+
+			console.log('\nFormData() instance from form-data?');
+			console.log(form);
+
+			await got.post('http://pauldwaite.co.uk/got-form-data-upload-test', {
+				body: form
+			});
+		});
+
+		it('maybe works with the example code from Got\'s readme, but JSDOM\'s FormData?', async function () {
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
+			const form = driver.getEmptyFormData();
+
+			console.log('\nFormData() instance from JSDOM?');
+			console.log(form);
+
+			form.append('some_text_at_least', 'whut');
+
+			// form.append('my_file', fs.createReadStream('lib/testFile.txt'));
+
+			await got.post('http://pauldwaite.co.uk/got-jsdom-form-data-upload-test-no-file', {
+				body: form
+			});
 		});
 
 		it.skip('works with <button> elements', async function () {});

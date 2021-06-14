@@ -39,6 +39,7 @@ class JSDOMDriver {
 		        statusCodes: [408, 429, 502, 503, 504, 521, 522, 524]
 		    },
 		});
+		// TODO: I have no idea what browser retry rules are, so I don't really know what we should be going for here.
 	}
 
 	async goTo(url) {
@@ -90,6 +91,12 @@ class JSDOMDriver {
 		await this.goTo(element.href);
 	}
 
+	getEmptyFormData(selector) {
+		const formData = new this.#global.FormData();
+
+		return formData;
+	}
+
 	async submitForm(selector) {
 		const element = this.$(selector);
 
@@ -123,6 +130,10 @@ class JSDOMDriver {
 		if (submitButtonElement && submitButtonElement.name) {
 			formData.set(submitButtonElement.name, submitButtonElement.value);
 		}
+
+		const fileThang = formData.get('input3');
+		console.log('\nfileThang:');
+		console.log(fileThang);
 
 		// TODO: we should make this work for GET forms too innit
 		// Maybe we can just set the method option to whatever formElement's method attribute says?
