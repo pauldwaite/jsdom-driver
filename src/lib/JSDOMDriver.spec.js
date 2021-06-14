@@ -2,6 +2,7 @@
 
 const      assert = require('assert');
 const      config = require('../test/expressApps/config');
+const          fs = require('fs');
 const JSDOMDriver = require('./JSDOMDriver');
 
 
@@ -225,6 +226,23 @@ describe('JSDOMDriver()', function () {
 		it.skip('maybe simulates the browser heuristics for including submit button values when a <form> element selector is supplied', async function () {});
 
 		it.skip('throws a sensible error if the selector selects no elements', async function () {});
+	});
+
+	describe('getDownload', function () {
+
+		it('returns the response body if it has a "content-disposition: attachment;" header', async function () {
+
+			const testFileContents = fs.readFileSync('test/expressApps/testPDF.pdf', 'utf8');
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/download/pdf`);
+
+			const download = driver.getDownload();
+
+			assert.strictEqual(
+				download,
+				testFileContents
+			);
+		});
 	});
 
 });

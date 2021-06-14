@@ -135,6 +135,12 @@ app.route('/json3')
 		});
 	});
 
+app.route('/download/pdf')
+	.get((req, res) => {
+		res.download('./test/expressApps/testPDF.pdf', 'testPDF.pdf');
+	})
+
+
 process.title = config.processTitle;
 
 const server = app.listen(config.port, () => {

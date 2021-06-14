@@ -18,6 +18,13 @@ class JSDOMDriver {
 		            beforeRequest: [deduplicatePrefixUrl],
 		            afterResponse: [
 		            	addJSDOMToResponse,
+		            	// (response) => {
+		            	// 	if (response.url === 'http://localhost:8088/download/pdf') {
+		            	// 		console.log('response.body:');
+		            	// 		console.log(response.body);
+		            	// 	}
+		            	// 	return response;
+		            	// },
 		            	(response) => {
 		            		this.#lastResponse = response;
 		            		this.#global = (this.#lastResponse.jsDom
@@ -130,6 +137,12 @@ class JSDOMDriver {
 	$$(selector) {
 		// TODO: maybe check if this.#global exists, and throw a sensible error if not?
 		return this.#global.document.querySelectorAll(selector);
+	}
+
+	getDownload() {
+		if (this.#lastResponse.headers['content-disposition'].startsWith('attachment;')) {
+			return this.#lastResponse.body;
+		}
 	}
 }
 
