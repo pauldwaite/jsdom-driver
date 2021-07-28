@@ -32,9 +32,12 @@ class JSDOMDriver {
 		            			: undefined);
 		            		return response;
 		            	}
-		            ]
+		            ],
 		        },
-		    prefixUrl: prefixUrl
+		    prefixUrl: prefixUrl,
+		    retry: {
+		        statusCodes: [408, 429, 502, 503, 504, 521, 522, 524]
+		    },
 		});
 	}
 
