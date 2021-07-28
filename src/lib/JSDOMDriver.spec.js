@@ -58,6 +58,30 @@ describe('JSDOMDriver()', function () {
 				}
 			);
 		});
+
+		it('still parses HTML pages as HTML, even if the response was 404', async function () {
+			try {
+				await driver.goTo(`http://localhost:${config.testExpressApp.port}/not-found-html`);
+			}
+			catch (err) {}
+
+			assert.strictEqual(
+				driver.$('title').textContent.startsWith('WHAT?'),
+				true
+			);
+		});
+
+		it('still parses HTML pages as HTML, even if the response was 500', async function () {
+			try {
+				await driver.goTo(`http://localhost:${config.testExpressApp.port}/server-error-html`);
+			}
+			catch (err) {}
+
+			assert.strictEqual(
+				driver.$('title').textContent.startsWith('BIG BAD SERVER ERROR'),
+				true
+			);
+		});
 	});
 
 

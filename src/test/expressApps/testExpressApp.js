@@ -57,6 +57,37 @@ app.route('/page')
 	});
 
 
+app.route('/not-found-html')
+	.all((req, res) => {
+		res.status(404).send(`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="utf-8">
+				<title>WHAT? - Test Express App</title>
+			</head>
+			<body data-test-id="test-express-app">
+				<p>There is no URL here. I could not find it. Here is some HTML instead.</p>
+			</body>
+			</html>
+		`);
+	});
+
+app.route('/server-error-html')
+	.all((req, res) => {
+		res.status(500).send(`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="utf-8">
+				<title>BIG BAD SERVER ERROR - Test Express App</title>
+			</head>
+			<body data-test-id="test-express-app">
+				<p>This is, without doubt, an HTML page</p>
+			</body>
+			</html>
+		`);
+	});
+
+
 app.route('/link1Destination')
 	.get((req, res) => {
 		res.status(200).send(`<!DOCTYPE html>
