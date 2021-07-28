@@ -1,14 +1,12 @@
 'use strict';
 
-const      assert = require('assert');
-const      config = require('../test/expressApps/config');
-const          fs = require('fs');
-const JSDOMDriver = require('./JSDOMDriver');
-
-
-const fs = require('fs');
-const got = require('got');
+const             assert = require('assert');
+const             config = require('../test/expressApps/config');
 const FormDataThirdParty = require('form-data');
+const                 fs = require('fs');
+const                got = require('got');
+const        JSDOMDriver = require('./JSDOMDriver');
+
 
 
 describe('JSDOMDriver()', function () {
@@ -23,6 +21,7 @@ describe('JSDOMDriver()', function () {
 
 
 	describe('constructor()', function () {
+
 		it('supports a prefixUrl option', async function () {
 			const driverWithPrefixUrl = new JSDOMDriver({
 				prefixUrl: `http://localhost:${config.testExpressApp.port}`
@@ -278,21 +277,24 @@ describe('JSDOMDriver()', function () {
 			);
 		});
 
-		it('does something sensible with empty file upload fields?', async function () {
+		it.skip('does something sensible with empty file upload fields?', async function () {
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
 
 			await driver.submitForm('form');
 		});
 
+
+
 		it.skip('maybe works with the example code from Got\'s readme at least?', async function () {
 			const form = new FormDataThirdParty();
 
-			form.append('my_file', fs.createReadStream('lib/testFile.txt'));
+			form.append('my_file', fs.readFileSync('lib/testFile.txt', 'utf8'));
 
 			console.log('\nFormData() instance from form-data?');
 			console.log(form);
 
-			await got.post('http://pauldwaite.co.uk/got-form-data-upload-test', {
+			// await got.post('http://pauldwaite.co.uk/got-form-data-upload-test', {
+			await got.post(`http://localhost:${config.testExpressApp.port}/my_fileDestination`, {
 				body: form
 			});
 		});
@@ -307,12 +309,14 @@ describe('JSDOMDriver()', function () {
 
 			form.append('some_text_at_least', 'whut');
 
-			// form.append('my_file', fs.createReadStream('lib/testFile.txt'));
+			form.append('my_file', fs.readFileSync('lib/testFile.txt', 'utf8'));
 
 			await got.post('http://pauldwaite.co.uk/got-jsdom-form-data-upload-test-no-file', {
 				body: form
 			});
 		});
+
+
 
 		it.skip('works with <button> elements', async function () {});
 

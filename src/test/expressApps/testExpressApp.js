@@ -109,12 +109,12 @@ app.route('/file-upload')
 			<head>
 				<meta charset="utf-8">
 
-				<title>File upload FormData()?</title>
+				<title>File upload FormData() fileywhut?</title>
 			</head>
 
 			<body>
 
-			<form action="http://www.pauldwaite.co.uk/jsdom-driver-upload-test" method="POST" enctype="multipart/form-data">
+			<form action="/fileywhutDestination" method="POST" enctype="multipart/form-data">
 				<label for="fileywhut">Yo a file:</label>
 				<input id="fileywhut" name="fileywhut" type="file"><br>
 				<br>
@@ -208,6 +208,62 @@ app.route('/form3Destination')
 
 						<dt>submit3:</dt>
 						<dd data-test-id="submit3-value">${req.body.submit3}</dd>
+					</dl>
+				</body>
+				</html>
+			`);
+		}
+	);
+
+app.route('/fileywhutDestination')
+	.post(
+		multer().single('fileywhut'),
+		(req, res) => {
+			console.log('\n/fileywhut POST!');
+			console.log('req.body:');
+			console.log(req.body);
+
+			console.log('req.body.fileywhut:');
+			console.log(req.body.fileywhut);
+
+			res.status(200).send(`<!DOCTYPE html>
+				<html lang="en">
+				<head>
+					<meta charset="utf-8">
+					<title>fileywhut (submitted) - Test Express App</title>
+				</head>
+				<body data-test-id="form3Destination">
+					<dl>
+						<dt>input3:</dt>
+						<dd data-test-id="fileywhut-value">${req.body.fileywhut}</dd>
+					</dl>
+				</body>
+				</html>
+			`);
+		}
+	);
+
+app.route('/my_fileDestination')
+	.post(
+		multer().single('my_file'),
+		(req, res) => {
+			console.log('\n/my_file POST!');
+			console.log('req.body:');
+			console.log(req.body);
+
+			console.log('req.body.my_file:');
+			console.log(req.body.my_file);
+
+			res.status(200).send(`<!DOCTYPE html>
+				<html lang="en">
+				<head>
+					<meta charset="utf-8">
+					<title>my_file (submitted) - Test Express App</title>
+				</head>
+				<body data-test-id="form3Destination">
+					<dl>
+						<dt>input3:</dt>
+						<dd data-test-id="my_file-value">${req.body.my_file}</dd>
 					</dl>
 				</body>
 				</html>
