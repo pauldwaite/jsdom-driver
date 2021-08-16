@@ -6,6 +6,7 @@ const          fs = require('fs');
 const JSDOMDriver = require('./JSDOMDriver');
 
 
+
 describe('JSDOMDriver()', function () {
 
 	const driver = new JSDOMDriver();
@@ -18,6 +19,7 @@ describe('JSDOMDriver()', function () {
 
 
 	describe('constructor()', function () {
+
 		it('supports a prefixUrl option', async function () {
 			const driverWithPrefixUrl = new JSDOMDriver({
 				prefixUrl: `http://localhost:${config.testExpressApp.port}`
@@ -53,6 +55,21 @@ describe('JSDOMDriver()', function () {
 					assert.strictEqual(
 						err.response.statusCode,
 						404
+					);
+					return true;
+				}
+			);
+		});
+
+		it('throws an error if the supplied URL returns 500', async function () {
+			assert.rejects(
+				async () => {
+					await driver.goTo(`http://localhost:${config.testExpressApp.port}/server-error`);
+				},
+				(err) => {
+					assert.strictEqual(
+						err.response.statusCode,
+						500
 					);
 					return true;
 				}
@@ -137,6 +154,21 @@ describe('JSDOMDriver()', function () {
 				'MADEUPMETHOD'
 			));
 		});
+
+		it('throws an error if the supplied URL returns 500', async function () {
+			assert.rejects(
+				async () => {
+					await driver.json(`http://localhost:${config.testExpressApp.port}/server-error`);
+				},
+				(err) => {
+					assert.strictEqual(
+						err.response.statusCode,
+						500
+					);
+					return true;
+				}
+			);
+		});
 	});
 
 
@@ -175,6 +207,10 @@ describe('JSDOMDriver()', function () {
 		});
 
 		it.skip('throws a sensible error if the selector selects no elements', async function () {});
+	});
+
+	describe('setFiles()',function () {
+		it.skip('adds files to file fields', function () {});
 	});
 
 	describe('submitForm()', function () {
@@ -240,6 +276,43 @@ describe('JSDOMDriver()', function () {
 			assert.strictEqual(
 				driver.$('[data-test-id="input2-value"]').textContent,
 				'Input 2 value set from test'
+			);
+		});
+
+		it('works with file upload fields, as long as you use driver.setFiles', async function () {
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
+
+			// TODO: possibly run for several test files eh
+			const testFileName = 'testFile2.jpg';
+			const testFileContents = fs.readFileSync(`test/${testFileName}`);
+
+			const testFile = [
+				[testFileContents],
+				testFileName,
+				{
+					type: 'image/jpg',
+				},
+			];
+
+			driver.setFiles('[name="file_field"]', [testFile]);
+
+			await driver.submitForm('[name="file_field"]');
+
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.fieldname"]').textContent,
+				'file_field'
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.originalname"]').textContent,
+				testFileName
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.mimetype"]').textContent,
+				'image/jpg'
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.size"]').textContent,
+				''+testFileContents.length
 			);
 		});
 
