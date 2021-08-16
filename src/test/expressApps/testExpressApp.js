@@ -109,14 +109,14 @@ app.route('/file-upload')
 			<head>
 				<meta charset="utf-8">
 
-				<title>File upload FormData() fileywhut?</title>
+				<title>File upload - Test Express App</title>
 			</head>
 
 			<body>
 
-			<form action="/fileywhutDestination" method="POST" enctype="multipart/form-data">
-				<label for="fileywhut">Yo a file:</label>
-				<input id="fileywhut" name="fileywhut" type="file"><br>
+			<form action="/file-upload-destination" method="POST" enctype="multipart/form-data">
+				<label for="file_field">Yo a file:</label>
+				<input id="file_field" name="file_field" type="file"><br>
 				<br>
 				<input type="submit">
 			</form>
@@ -184,86 +184,30 @@ app.route('/form2Destination')
 		`);
 	});
 
-app.route('/form3Destination')
+app.route('/file-upload-destination')
 	.post(
-		multer().single('input3'),
+		multer().single('file_field'),
 		(req, res) => {
-			console.log('\n/form3Destination POST!');
-			console.log('req.body:');
-			console.log(req.body);
-
-			console.log('req.body.input3:');
-			console.log(req.body.input3);
-
 			res.status(200).send(`<!DOCTYPE html>
 				<html lang="en">
 				<head>
 					<meta charset="utf-8">
-					<title>Form 3 (submitted) - Test Express App</title>
+					<title>File upload (submitted) - Test Express App</title>
 				</head>
-				<body data-test-id="form3Destination">
+				<body data-test-id="file-upload-destination">
+					<h1>req.file</h1>
 					<dl>
-						<dt>input3:</dt>
-						<dd data-test-id="input3-value">${req.body.input3}</dd>
+						<dt>fieldname:</dt>
+						<dd data-test-id="req.file.fieldname">${req.file.fieldname}</dd>
 
-						<dt>submit3:</dt>
-						<dd data-test-id="submit3-value">${req.body.submit3}</dd>
-					</dl>
-				</body>
-				</html>
-			`);
-		}
-	);
+						<dt>originalname:</dt>
+						<dd data-test-id="req.file.originalname">${req.file.originalname}</dd>
 
-app.route('/fileywhutDestination')
-	.post(
-		multer().single('fileywhut'),
-		(req, res) => {
-			console.log('\n/fileywhut POST!');
-			console.log('req.body:');
-			console.log(req.body);
+						<dt>mimetype:</dt>
+						<dd data-test-id="req.file.mimetype">${req.file.mimetype}</dd>
 
-			console.log('req.body.fileywhut:');
-			console.log(req.body.fileywhut);
-
-			res.status(200).send(`<!DOCTYPE html>
-				<html lang="en">
-				<head>
-					<meta charset="utf-8">
-					<title>fileywhut (submitted) - Test Express App</title>
-				</head>
-				<body data-test-id="form3Destination">
-					<dl>
-						<dt>input3:</dt>
-						<dd data-test-id="fileywhut-value">${req.body.fileywhut}</dd>
-					</dl>
-				</body>
-				</html>
-			`);
-		}
-	);
-
-app.route('/my_fileDestination')
-	.post(
-		multer().single('my_file'),
-		(req, res) => {
-			console.log('\n/my_file POST!');
-			console.log('req.body:');
-			console.log(req.body);
-
-			console.log('req.body.my_file:');
-			console.log(req.body.my_file);
-
-			res.status(200).send(`<!DOCTYPE html>
-				<html lang="en">
-				<head>
-					<meta charset="utf-8">
-					<title>my_file (submitted) - Test Express App</title>
-				</head>
-				<body data-test-id="form3Destination">
-					<dl>
-						<dt>input3:</dt>
-						<dd data-test-id="my_file-value">${req.body.my_file}</dd>
+						<dt>size:</dt>
+						<dd data-test-id="req.file.size">${req.file.size}</dd>
 					</dl>
 				</body>
 				</html>

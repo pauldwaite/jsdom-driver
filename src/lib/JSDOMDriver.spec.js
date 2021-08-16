@@ -1,11 +1,9 @@
 'use strict';
 
-const             assert = require('assert');
-const             config = require('../test/expressApps/config');
-const FormDataThirdParty = require('form-data');
-const                 fs = require('fs');
-const                got = require('got');
-const        JSDOMDriver = require('./JSDOMDriver');
+const      assert = require('assert');
+const      config = require('../test/expressApps/config');
+const          fs = require('fs');
+const JSDOMDriver = require('./JSDOMDriver');
 
 
 
@@ -211,6 +209,10 @@ describe('JSDOMDriver()', function () {
 		it.skip('throws a sensible error if the selector selects no elements', async function () {});
 	});
 
+	describe('setFiles()',function () {
+		it.skip('adds files to file fields', function () {});
+	});
+
 	describe('submitForm()', function () {
 
 		it('like, submits a form or whatever', async function () {
@@ -277,46 +279,42 @@ describe('JSDOMDriver()', function () {
 			);
 		});
 
-		it.skip('does something sensible with empty file upload fields?', async function () {
+		it('works with file upload fields, as long as you use driver.setFiles', async function () {
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
 
-			await driver.submitForm('form');
+			// TODO: possibly run for several test files eh
+			const testFileName = 'testFile2.jpg';
+			const testFileContents = fs.readFileSync(`test/${testFileName}`);
+
+			const testFile = [
+				[testFileContents],
+				testFileName,
+				{
+					type: 'image/jpg',
+				},
+			];
+
+			driver.setFiles('[name="file_field"]', [testFile]);
+
+			await driver.submitForm('[name="file_field"]');
+
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.fieldname"]').textContent,
+				'file_field'
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.originalname"]').textContent,
+				testFileName
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.mimetype"]').textContent,
+				'image/jpg'
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="req.file.size"]').textContent,
+				''+testFileContents.length
+			);
 		});
-
-
-
-		it.skip('maybe works with the example code from Got\'s readme at least?', async function () {
-			const form = new FormDataThirdParty();
-
-			form.append('my_file', fs.readFileSync('lib/testFile.txt', 'utf8'));
-
-			console.log('\nFormData() instance from form-data?');
-			console.log(form);
-
-			// await got.post('http://pauldwaite.co.uk/got-form-data-upload-test', {
-			await got.post(`http://localhost:${config.testExpressApp.port}/my_fileDestination`, {
-				body: form
-			});
-		});
-
-		it('maybe works with the example code from Got\'s readme, but JSDOM\'s FormData?', async function () {
-
-			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
-			const form = driver.getEmptyFormData();
-
-			console.log('\nFormData() instance from JSDOM?');
-			console.log(form);
-
-			form.append('some_text_at_least', 'whut');
-
-			form.append('my_file', fs.readFileSync('lib/testFile.txt', 'utf8'));
-
-			await got.post('http://pauldwaite.co.uk/got-jsdom-form-data-upload-test-no-file', {
-				body: form
-			});
-		});
-
-
 
 		it.skip('works with <button> elements', async function () {});
 
