@@ -173,34 +173,39 @@ class JSDOMDriver {
 			for (let entry of formDataNative.entries()) {
 				const [fieldName, value] = entry;
 
-				// TODO: support file fields with multiple files added
 				if (value.constructor.name === 'File') {
 					// Grab native File object from DOM element, because  JSDOM's FormData implementation does not seem to support file fields yet - File objects are accessible in it, but they have no size
 					const fieldElement = formElement.querySelector(`[name="${fieldName}"]`);
-					const file = fieldElement.files[0];
 
-					const {FileReader} = this.#global;
+					// TODO: check what actual browser POST requests look like for multipart/form-data forms with empty file fields, and check whether we're doing the same thing here. (We probably are? But check innit.)
+					if (fieldElement.files.length >  0) {
+						// TODO: support file fields with multiple files added
+						const file = fieldElement.files[0];
 
-					const fileContents = await new Promise((resolve, reject) => {
-						const fileReader = new FileReader();
+						const {FileReader} = this.#global;
 
-						fileReader.readAsArrayBuffer(file);
+						const fileContents = await new Promise((resolve, reject) => {
+							const fileReader = new FileReader();
 
-						fileReader.onloadend = () => {
-							// Convert result from an ArrayBuffer to a Node.js Buffer, because we can create a readable Node.js stream from that
-							resolve( Buffer.from(fileReader.result) );
-						}
-					});
+							fileReader.readAsArrayBuffer(file);
 
-					formDataNotNative.append(
-						fieldName,
-						stream.Readable.from(fileContents),
-						{
-							filename: file.name,
-							contentType: file.type,
-							knownLength: file.size
-						}
-					);
+							fileReader.onloadend = () => {
+								// Convert result from an ArrayBuffer to a Node.js Buffer, because we can create a readable Node.js stream from that
+								resolve( Buffer.from(fileReader.result) );
+							}
+						});
+
+						formDataNotNative.append(
+							fieldName,
+							stream.Readable.from(fileContents),
+							{
+								filename: file.name,
+								contentType: file.type,
+								knownLength: file.size
+							}
+						);
+					}
+
 				}
 				else {
 					formDataNotNative.append(fieldName, value);

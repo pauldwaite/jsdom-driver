@@ -279,7 +279,7 @@ describe('JSDOMDriver()', function () {
 			);
 		});
 
-		it('works with file upload fields, as long as you use driver.setFiles', async function () {
+		it('works with file fields on enctype="multipart/form-data" forms, as long as you use driver.setFiles', async function () {
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
 
 			// TODO: possibly run for several test files eh
@@ -313,6 +313,18 @@ describe('JSDOMDriver()', function () {
 			assert.strictEqual(
 				driver.$('[data-test-id="req.file.size"]').textContent,
 				''+testFileContents.length
+			);
+		});
+
+		it('doesn\'t barf on empty file fields', async function () {
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/file-upload`);
+
+			await driver.submitForm('[name="file_field"]');
+
+			assert.strictEqual(
+				driver.$('title').textContent,
+				'File upload (submitted) - Test Express App'
 			);
 		});
 

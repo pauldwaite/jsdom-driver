@@ -198,16 +198,16 @@ app.route('/file-upload-destination')
 					<h1>req.file</h1>
 					<dl>
 						<dt>fieldname:</dt>
-						<dd data-test-id="req.file.fieldname">${req.file.fieldname}</dd>
+						<dd data-test-id="req.file.fieldname">${req.file && req.file.fieldname}</dd>
 
 						<dt>originalname:</dt>
-						<dd data-test-id="req.file.originalname">${req.file.originalname}</dd>
+						<dd data-test-id="req.file.originalname">${req.file && req.file.originalname}</dd>
 
 						<dt>mimetype:</dt>
-						<dd data-test-id="req.file.mimetype">${req.file.mimetype}</dd>
+						<dd data-test-id="req.file.mimetype">${req.file && req.file.mimetype}</dd>
 
 						<dt>size:</dt>
-						<dd data-test-id="req.file.size">${req.file.size}</dd>
+						<dd data-test-id="req.file.size">${req.file && req.file.size}</dd>
 					</dl>
 				</body>
 				</html>
