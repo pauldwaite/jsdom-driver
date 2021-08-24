@@ -9,9 +9,11 @@ const            stream = require('stream');
 
 class JSDOMDriver {
 
-	#request
-	#lastResponse;
 	#global;
+	#lastResponse;
+	#request;
+
+	currentUrl;
 
 	constructor({prefixUrl}={}) {
 		this.#request = got.extend({
@@ -20,18 +22,14 @@ class JSDOMDriver {
 		            beforeRequest: [deduplicatePrefixUrl],
 		            afterResponse: [
 		            	addJSDOMToResponse,
-		            	// (response) => {
-		            	// 	if (response.url === 'http://localhost:8088/download/pdf') {
-		            	// 		console.log('response.body:');
-		            	// 		console.log(response.body);
-		            	// 	}
-		            	// 	return response;
-		            	// },
 		            	(response) => {
 		            		this.#lastResponse = response;
 		            		this.#global = (this.#lastResponse.jsDom
 		            			? this.#lastResponse.jsDom.window
 		            			: undefined);
+
+		            		this.currentUrl = response.url;
+
 		            		return response;
 		            	}
 		            ],

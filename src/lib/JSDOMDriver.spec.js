@@ -18,6 +18,33 @@ describe('JSDOMDriver()', function () {
 	});
 
 
+	describe('.currentUrl', function () {
+
+		it('is undefined when the driver hasn\'t driven anywhere', function () {
+
+			const driver = new JSDOMDriver();
+
+			assert.strictEqual(
+				driver.currentUrl,
+				undefined
+			);
+		});
+
+		it('contains the last URL the driver went to', async function () {
+
+			const driver = new JSDOMDriver();
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/page`);
+
+			assert.strictEqual(
+				driver.currentUrl,
+				`http://localhost:${config.testExpressApp.port}/page`
+			);
+		});
+	});
+
+
 	describe('constructor()', function () {
 
 		it('supports a prefixUrl option', async function () {
