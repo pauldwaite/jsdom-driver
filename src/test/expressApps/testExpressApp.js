@@ -241,6 +241,23 @@ app.route('/download/pdf')
 		res.download('./test/expressApps/testPDF.pdf', 'testPDF.pdf');
 	})
 
+// URLs we didn't handle
+app.use((req, res) => {
+	// console.log(`testExpressApp: 404 not-found error for ${req.originalUrl}`);
+
+	res.status(404).send(`<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<title>WHAT? - Test Express App</title>
+		</head>
+		<body data-test-id="test-express-app">
+			<p>There is no URL here. I could not find it. Here is some HTML instead.</p>
+		</body>
+		</html>
+	`);
+});
+
 
 process.title = config.processTitle;
 

@@ -13,5 +13,5 @@ docker                                         \
   --volume "$(pwd)/src:/workdir"               \
   --volume             /workdir/node_modules   \
   --workdir            /workdir                \
-  node:14-alpine                               \
+  node:18-alpine                               \
     /bin/sh -c "npm install --no-optional --loglevel error; npm outdated"

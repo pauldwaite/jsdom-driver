@@ -1,52 +1,81 @@
 'use strict';
 
-const       {CookieJar} = require('tough-cookie');
-const FormDataNotNative = require('form-data');
-const               got = require('got');
-const           {JSDOM} = require('jsdom');
-const            stream = require('stream');
+const  {CookieJar} = require('tough-cookie');
+const FormDataNode = import('../node_modules/formdata-node/lib/index.js');
+const          Got = import('../node_modules/got/dist/source/index.js');
+const      {JSDOM} = require('jsdom');
+const       stream = require('node:stream');
+const        {URL} = require('node:url');
 
 
 class JSDOMDriver {
 
 	#global;
 	#lastResponse;
+	#prefixUrl;
 	#request;
 
 	currentUrl;
 
 	constructor({prefixUrl}={}) {
-		this.#request = got.extend({
-		    cookieJar: new CookieJar(),
-		        hooks: {
-		            beforeRequest: [deduplicatePrefixUrl],
-		            afterResponse: [
-		            	addJSDOMToResponse,
-		            	(response) => {
-		            		this.#lastResponse = response;
-		            		this.#global = (this.#lastResponse.jsDom
-		            			? this.#lastResponse.jsDom.window
-		            			: undefined);
+		this.#prefixUrl = prefixUrl;
+	}
 
-		            		this.currentUrl = response.url;
+	async #init() {
+		if (this.#request === undefined) {
+			const options = {
+			    cookieJar: new CookieJar(),
+			    hooks: {
+			        afterResponse: [
+			        	addJSDOMToResponse,
+			            (response) => {
+			            	this.#lastResponse = response;
+			            	this.#global = (this.#lastResponse.jsDom
+			            		? this.#lastResponse.jsDom.window
+			            		: undefined);
 
-		            		return response;
-		            	}
-		            ],
-		        },
-		    prefixUrl: prefixUrl,
-		    retry: {
-		        statusCodes: [408, 429, 502, 503, 504, 521, 522, 524]
-		    },
-		});
-		// TODO: I have no idea what browser retry rules are, so I don't really know what we should be going for here.
+			            	this.currentUrl = response.url;
+
+			            	return response;
+			            }
+			        ],
+			    },
+			    retry: {
+			        statusCodes: [408, 429, 502, 503, 504, 521, 522, 524]
+			        // TODO: I have no idea what browser retry rules are, so I don't really know what we should be going for here.
+			    },
+			};
+
+			const {got} = await Got;
+			this.#request = got.extend(options);
+		}
+	}
+
+	#url(stringOrURL) {
+		// TODO: add more tests for URLs, and prefixUrl, to define behaviour more explicity
+		// (Especially: prefixUrl should probably just be for when you tell JSDOMDriver to go somewhere, not for following links and such)
+		// (Which I think is probably what it does anyway, but put in some damn tests for it.)
+		let url;
+
+		if (stringOrURL.constructor === URL) {
+			url = stringOrURL;
+		}
+		else {
+			url = new URL(stringOrURL, this.#prefixUrl)
+		}
+
+		return url;
 	}
 
 	async goTo(url) {
-		await this.#request(url);
+		await this.#init();
+
+		await this.#request( this.#url(url) );
 	}
 
 	async json(url, body=undefined, method='POST') {
+		await this.#init();
+
 		const options = {};
 
 		if (body === undefined) {
@@ -61,21 +90,25 @@ class JSDOMDriver {
 			options.method = method;
 		}
 
-		const response = await this.#request(url, options).json();
+		const response = await this.#request(this.#url(url), options).json();
 
 		return response;
 	}
 
-	// TODO: should this maybe not be an instance method? As it doesn't use any of the instance's things?
 	async isUp(url, timeout=5000) {
+		await this.#init();
+
 		// We use this.#request here, because even though we're just checking that the request didn't throw to confirm the server is up, we still want prefixUrl to work if defined
-		await this.#request(url, {
-			timeout: timeout
+		await this.#request(this.#url(url), {
+			retry: {limit:10},
+			timeout: {response:timeout},
 		});
 		return true;
 	}
 
 	async followLink(selector) {
+		await this.#init();
+
 		const element = this.$(selector);
 
 		if (! (element.constructor.name === 'HTMLAnchorElement') ) {
@@ -91,12 +124,6 @@ class JSDOMDriver {
 		await this.goTo(element.href);
 	}
 
-	getEmptyFormData(selector) {
-		const formData = new this.#global.FormData();
-
-		return formData;
-	}
-
 	setFiles(selector, files=[]) {
 
 		const element = this.$(selector);
@@ -107,7 +134,6 @@ class JSDOMDriver {
 		)) {
 		       throw new TypeError(`${selector} must be a file input`);
 		}
-
 		// Create a fake FileList object
 		// Stolen from https://bitbucket.org/william_rusnack/addfilelist/src/master/addFileList.js
 		// See, I think: https://github.com/jsdom/jsdom/issues/1272
@@ -125,6 +151,9 @@ class JSDOMDriver {
 	}
 
 	async submitForm(selector) {
+		await this.#init();
+		const {FormData, File} = await FormDataNode;
+
 		const element = this.$(selector);
 
 		let formElement;
@@ -158,24 +187,18 @@ class JSDOMDriver {
 			method: 'POST'
 		};
 
-		const formDataNative = new this.#global.FormData(formElement);
-
-		if (submitButtonElement && submitButtonElement.name) {
-			formDataNative.set(submitButtonElement.name, submitButtonElement.value);
-		}
+		const formDataJSDOM = new this.#global.FormData(formElement);
 
 		if (formElement.enctype === 'multipart/form-data') {
-			// Convert to non-native FormData implementation to support file uploads
-			const formDataNotNative = new FormDataNotNative();
+			const formData = new FormData();
 
-			for (let entry of formDataNative.entries()) {
-				const [fieldName, value] = entry;
-
+			for (let [fieldName, value] of formDataJSDOM.entries()) {
 				if (value.constructor.name === 'File') {
-					// Grab native File object from DOM element, because  JSDOM's FormData implementation does not seem to support file fields yet - File objects are accessible in it, but they have no size
+					// Grab native File object from DOM element, because JSDOM's FormData implementation does not seem to support file fields yet - File objects are accessible in it, but they have no size
 					const fieldElement = formElement.querySelector(`[name="${fieldName}"]`);
 
 					// TODO: check what actual browser POST requests look like for multipart/form-data forms with empty file fields, and check whether we're doing the same thing here. (We probably are? But check innit.)
+					// https://httpbin.org might be useful for that?
 					if (fieldElement.files.length >  0) {
 						// TODO: support file fields with multiple files added
 						const file = fieldElement.files[0];
@@ -193,32 +216,41 @@ class JSDOMDriver {
 							}
 						});
 
-						formDataNotNative.append(
+						formData.set(
 							fieldName,
-							stream.Readable.from(fileContents),
-							{
-								filename: file.name,
-								contentType: file.type,
-								knownLength: file.size
-							}
+							// See https://github.com/octet-stream/form-data#class-file-extends-blob
+							new File(
+								[fileContents],
+								file.name,
+								{type:file.type}
+							)
 						);
 					}
 
 				}
 				else {
-					formDataNotNative.append(fieldName, value);
+					formData.set(fieldName, value);
 				}
 			}
 
 			// See https://github.com/sindresorhus/got/blob/main/documentation/2-options.md#body
-			requestOptions.body = formDataNotNative;
+			requestOptions.body = formData;
 		}
 		else {
-			// Shortcut for non-multipart form POSTs in Got; see https://github.com/sindresorhus/got/blob/main/documentation/2-options.md#form
-			requestOptions.form = formDataNative;
+			// See https://github.com/sindresorhus/got/blob/main/documentation/2-options.md#form
+			requestOptions.form = Object.fromEntries( formDataJSDOM.entries() );
 		}
 
-		await this.#request(formUrl, requestOptions);
+		if (submitButtonElement && submitButtonElement.name) {
+			if (requestOptions.body) {
+				requestOptions.body.set(submitButtonElement.name, submitButtonElement.value)
+			}
+			else if (requestOptions.form) {
+				requestOptions.form[submitButtonElement.name] = submitButtonElement.value;
+			}
+		}
+
+		await this.#request(this.#url(formUrl), requestOptions);
 	}
 
 	$(selector) {
@@ -269,18 +301,6 @@ const addJSDOMToResponse = async (response) => {
 	}
 
 	return response;
-};
-
-const deduplicatePrefixUrl = (requestOptions) => {
-	const prefixUrl = requestOptions.prefixUrl;
-	const pathnameWithoutSlash = requestOptions.url.pathname.slice(1);
-
-	if (
-		   prefixUrl.length
-		&& pathnameWithoutSlash.startsWith(prefixUrl)
-	) {
-		requestOptions.url.pathname = requestOptions.url.pathname.replace(prefixUrl, '');
-	}
 };
 
 

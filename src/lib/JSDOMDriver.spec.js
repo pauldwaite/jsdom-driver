@@ -74,7 +74,7 @@ describe('JSDOMDriver()', function () {
 		});
 
 		it('throws an error if the supplied URL returns 404', async function () {
-			assert.rejects(
+			await assert.rejects(
 				async () => {
 					await driver.goTo(`http://localhost:${config.testExpressApp.port}/thisURLDoesNotExist`);
 				},
@@ -89,7 +89,7 @@ describe('JSDOMDriver()', function () {
 		});
 
 		it('throws an error if the supplied URL returns 500', async function () {
-			assert.rejects(
+			await assert.rejects(
 				async () => {
 					await driver.goTo(`http://localhost:${config.testExpressApp.port}/server-error`);
 				},
@@ -183,7 +183,7 @@ describe('JSDOMDriver()', function () {
 		});
 
 		it('throws an error if the supplied URL returns 500', async function () {
-			assert.rejects(
+			await assert.rejects(
 				async () => {
 					await driver.json(`http://localhost:${config.testExpressApp.port}/server-error`);
 				},
