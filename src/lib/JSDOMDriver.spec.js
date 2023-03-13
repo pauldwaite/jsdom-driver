@@ -64,6 +64,11 @@ describe('JSDOMDriver()', function () {
 
 	describe('goTo()', function () {
 
+		// TODO: how about if we get a 302 response back? I think some browsers, then make a GET request to the redirect URL, although possibly got doesn't by default? Hm.
+		// https://stackoverflow.com/questions/5129076/after-a-post-should-i-do-a-302-or-a-303-redirect
+		// https://softwareengineering.stackexchange.com/questions/99894/why-doesnt-http-have-post-redirect
+		// https://support.postman.com/hc/en-us/articles/211913929-I-sent-a-POST-request-but-Postman-seems-to-be-sending-a-GET-request-
+
 		it('goes somewhere', async function () {
 			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
 
