@@ -1,8 +1,8 @@
 'use strict';
 
 const  {CookieJar} = require('tough-cookie');
-const FormDataNode = import('../node_modules/formdata-node/lib/index.js');
-const          Got = import('../node_modules/got/dist/source/index.js');
+const FormDataNode = import('formdata-node');
+const          Got = import('got');
 const      {JSDOM} = require('jsdom');
 const       stream = require('node:stream');
 const        {URL} = require('node:url');
