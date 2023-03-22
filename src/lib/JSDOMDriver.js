@@ -229,7 +229,7 @@ class JSDOMDriver {
 
 				}
 				else {
-					formData.set(fieldName, value);
+					formData.append(fieldName, value);
 				}
 			}
 
@@ -238,7 +238,19 @@ class JSDOMDriver {
 		}
 		else {
 			// See https://github.com/sindresorhus/got/blob/main/documentation/2-options.md#form
-			requestOptions.form = Object.fromEntries( formDataJSDOM.entries() );
+			requestOptions.form = {};
+
+			for (let [key, value] of formDataJSDOM.entries()) {
+				if (requestOptions.form[key] === undefined) {
+					requestOptions.form[key] = value;
+				}
+				else if ( Array.isArray(requestOptions.form[key]) ) {
+					requestOptions.form[key].push(value);
+				}
+				else {
+					requestOptions.form[key] = [requestOptions.form[key], value];
+				}
+			}
 		}
 
 		if (submitButtonElement && submitButtonElement.name) {

@@ -360,6 +360,67 @@ describe('JSDOMDriver()', function () {
 			);
 		});
 
+		it('submits checkboxes properly when one is checked', async function () {
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
+
+			driver.$('[data-test-id="checkboxes1-2"]').checked = true;
+
+			await driver.submitForm('[data-test-id="submit4"]');
+
+			assert.strictEqual(
+				driver.$$('[data-test-id="form4Destination"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$$('[data-test-id="checkboxes1-first-checked"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="checkboxes1-first-checked"]').textContent,
+				'Checkbox 1-2 value'
+			);
+			assert.strictEqual(
+				driver.$$('[data-test-id="checkboxes1-second-checked"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="checkboxes1-second-checked"]').textContent,
+				''
+			);
+		});
+
+		it('submits checkboxes properly when all are checked', async function () {
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
+
+			driver.$('[data-test-id="checkboxes1-1"]').checked = true;
+			driver.$('[data-test-id="checkboxes1-2"]').checked = true;
+
+			await driver.submitForm('[data-test-id="submit4"]');
+
+			assert.strictEqual(
+				driver.$$('[data-test-id="form4Destination"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$$('[data-test-id="checkboxes1-first-checked"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="checkboxes1-first-checked"]').textContent,
+				'Checkbox 1-1 value'
+			);
+			assert.strictEqual(
+				driver.$$('[data-test-id="checkboxes1-second-checked"]').length,
+				1
+			);
+			assert.strictEqual(
+				driver.$('[data-test-id="checkboxes1-second-checked"]').textContent,
+				'Checkbox 1-2 value'
+			);
+		});
+
 		it.skip('works with <button> elements', async function () {});
 
 		it.skip('works with <form> elements', async function () {});

@@ -44,6 +44,20 @@ app.route('/')
 
 					<input data-test-id="submit3" type="submit" name="submit3" value="Submit 3">
 				</form>
+
+				<form method="POST" action="/form4Destination">
+					<fieldset>
+						<legend>Checkboxes 1</legend>
+
+						<label for="checkboxes1-1">Checkbox 1-1</label>
+						<input data-test-id="checkboxes1-1" name="checkboxes1" type="checkbox" value="Checkbox 1-1 value">
+
+						<label for="checkboxes1-2">Checkbox 1-2</label>
+						<input data-test-id="checkboxes1-2" name="checkboxes1" type="checkbox" value="Checkbox 1-2 value">
+					</fieldset>
+
+					<input data-test-id="submit4" type="submit" name="submit4" value="Submit 4">
+				</form>
 			</body>
 			</html>
 		`);
@@ -178,6 +192,27 @@ app.route('/form2Destination')
 
 					<dt>submit2:</dt>
 					<dd data-test-id="submit2-value">${req.body.submit2}</dd>
+				</dl>
+			</body>
+			</html>
+		`);
+	});
+
+app.route('/form4Destination')
+	.post((req, res) => {
+		res.status(200).send(`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="utf-8">
+				<title>Form 4 (submitted) - Test Express App</title>
+			</head>
+			<body data-test-id="form4Destination">
+				<dl>
+					<dt>Checkboxes 1 first checked checkbox:</dt>
+					<dd data-test-id="checkboxes1-first-checked">${req.body.checkboxes1.split(',')[0] || ''}</dd>
+
+					<dt>Checkboxes 1 second checked checkbox:</dt>
+					<dd data-test-id="checkboxes1-second-checked">${req.body.checkboxes1.split(',')[1] || ''}</dd>
 				</dl>
 			</body>
 			</html>
