@@ -1,8 +1,8 @@
 {
   "name": "jsdom-driver",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "description": "WebDriver-ish JavaScript API controlling a fake web browser powered by JSDOM",
   "homepage": "https://github.com/pauldwaite/jsdom-driver#readme",
@@ -22,10 +22,10 @@
     "test": "node test/expressApps/testExpressApp.js & mocha; pkill -SIGINT testExpressApp"
   },
   "dependencies": {
-    "formdata-node": "5.0.0",
-    "got": "12.6.0",
-    "jsdom": "21.1.1",
-    "tough-cookie": "4.1.2"
+    "formdata-node": "6.0.3",
+    "got": "14.0.0",
+    "jsdom": "23.0.1",
+    "tough-cookie": "4.1.3"
   },
   "devDependencies": {
     "express": "4.18.2",
