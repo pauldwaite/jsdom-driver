@@ -16,6 +16,7 @@ class JSDOMDriver {
 	#request;
 
 	currentUrl;
+	headers;
 
 	constructor({prefixUrl}={}) {
 		this.#prefixUrl = prefixUrl;
@@ -35,6 +36,8 @@ class JSDOMDriver {
 			            		: undefined);
 
 			            	this.currentUrl = response.url;
+
+			            	this.headers = response.headers;
 
 			            	return response;
 			            }

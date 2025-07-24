@@ -15,6 +15,9 @@ app.use( express.urlencoded({
 
 app.route('/')
 	.all((req, res) => {
+		res.set({
+			'X-Test-1': '/'
+		});
 		res.status(200).send(`<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -65,6 +68,9 @@ app.route('/')
 
 app.route('/page')
 	.get((req, res) => {
+		res.set({
+			'X-Test-1': '/page'
+		});
 		res.status(200).send(`<!DOCTYPE html>
 			<html lang="en">
 			<head>

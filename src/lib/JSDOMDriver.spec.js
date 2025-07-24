@@ -45,6 +45,35 @@ describe('JSDOMDriver()', function () {
 	});
 
 
+	describe('.headers', function () {
+
+		it('is undefined when the driver hasn\'t driven anywhere', function () {
+
+			const driver = new JSDOMDriver();
+
+			assert.strictEqual(
+				driver.headers,
+				undefined
+			);
+		});
+
+		it('contains the response headers from the last URL the driver went to, with header names normalised to lower case', async function () {
+			const driver = new JSDOMDriver();
+
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/`);
+			await driver.goTo(`http://localhost:${config.testExpressApp.port}/page`);
+
+			console.log(`HEADERS YO!`);
+			console.log(driver.headers);
+
+			assert.strictEqual(
+				driver.headers['x-test-1'],
+				'/page'
+			);
+		});
+	})
+
+
 	describe('constructor()', function () {
 
 		it('supports a prefixUrl option', async function () {
